@@ -61,6 +61,7 @@ export default {
 <html>
   <head>
     <title>VialAI</title>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
     <!--link rel="stylesheet" href="/static/style.css" /-->
     <style>@import url("https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap");
       html {
@@ -218,6 +219,8 @@ export default {
         pointer-events:none;
         transition:0.5s;
         overflow:auto;
+        max-height:50vh;
+        overflow:auto;
       }
       .overlay-glass.opened {
         opacity:1;
@@ -267,7 +270,12 @@ export default {
       src="https://kit.fontawesome.com/c4d643d840.js"
       crossorigin="anonymous"
     ></script>
+    <script type='module'>
+            import MarkdownIt from "https://cdn.jsdelivr.net/npm/markdown-it@14/+esm";
+            window['md'] = new MarkdownIt();
+    </script>
     <script>
+    function thisclose(elmnt) {elmnt.parentElement.parentElement.classList.remove('opened')}
       document.addEventListener("DOMContentLoaded",function(){
         var textbox = document.querySelector("#textbox");
 var popup = document.querySelector("#popup");
@@ -278,13 +286,14 @@ textbox.addEventListener("keydown",function(e){
         var text = textbox.value;
         load.classList.add("opened");
         fetch("https://vialai.amsilla.workers.dev/ask?" + btoa(encodeURIComponent(text)))
-        .then(response => response.json())
+        .then(response => response.text())
         .then(data => {
             load.classList.remove("opened");
-            popup.innerText = data;
+            popup.innerHTML = "<div style='height:50vh !important;overflow:scroll;'><button onclick='thisclose(this)'>&times; Close</button>" + DOMPurify.sanitize(md.render(data)) + "</div>";
             popup.classList.add("opened");
         })
         .catch(error => {
+            console.log(error);
             load.classList.remove("opened");
             popup.innerHTML = "<h1>Something went wrong</h1>";
             popup.classList.add("opened");
@@ -299,7 +308,7 @@ textbox.addEventListener("keydown",function(e){
     <nav>
       <div class="logo"><img src="/static/favicon.png" />VialAI</div>
       <div class="btncont">
-        <i class="fa-solid fa-info-circle"></i> For the GCC Labor Day Hackathon
+        <i class="fa-solid fa-info-circle"></i>&nbsp;For the GCC Labor Day Hackathon
       </div>
     </nav>
     <section class="banner">
@@ -353,6 +362,17 @@ textbox.addEventListener("keydown",function(e){
         "content-type": "text/html;charset=UTF-8",
       },
     });
+    /*<script type="module">
+  import MarkdownIt from "https://cdn.jsdelivr.net/npm/markdown-it@14/+esm";
+  import DOMPurify from "https://cdn.jsdelivr.net/npm/dompurify@3/+esm";
+
+  const md = new MarkdownIt();
+
+  document.querySelectorAll(".md").forEach(el => {
+    el.innerHTML = DOMPurify.sanitize(md.render(el.textContent));
+  });
+</script>
+*/
         }
     }
 };
