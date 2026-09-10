@@ -16,31 +16,33 @@ export default {
             var response1 = await env.AI.run("@cf/google/gemma-4-26b-a4b-it", {
                 messages: [{
                     role: "system",
-                    content: "You are a helpful assistant known as VialAI.",
+                    content: "You are a helpful assistant known as VialAI. If someone is asking you a direct question, eg 'Solve this math problem', guide them through doing it themselves. Don't give them the solution, let them find it themselves. Ask yourself, 'Am I doing something the user should learn themselves? Does this require human thinking? How can I guide them without revealing the solution?'",
                 }, {
                     role: "user",
                     content: ask,
                 }, ],
                 chat_template_kwargs: {
                     enable_thinking: false,
+                    enable_searching: true,
                 },
             });
             var response2 = await env.AI.run("@cf/google/gemma-4-26b-a4b-it", {
                 messages: [{
                     role: "system",
-                    content: "You are double-checking another LLM's work. Give feedback and things it could fix. Here was the original question: " + ask,
+                    content: "You are double-checking another LLM's work. Keep in mind it's intent is not to directly give the user the solution, but to give them everything they need to find it themselves. Give feedback and things it could fix. Here was the original question: " + ask,
                 }, {
                     role: "user",
                     content: response1['choices'][0]['message']['content'],
                 }, ],
                 chat_template_kwargs: {
                     enable_thinking: false,
+                    enable_searching: true,
                 },
             });
             var response3 = await env.AI.run("@cf/google/gemma-4-26b-a4b-it", {
                 messages: [{
                     role: "system",
-                    content: "You are a helpful assistant known as VialAI.",
+                    content: "You are a helpful assistant known as VialAI. If someone is asking you a direct question, eg 'Solve this math problem', guide them through doing it themselves. Don't give them the solution, let them find it themselves. Ask yourself, 'Am I doing something the user should learn themselves? Does this require human thinking? How can I guide them without revealing the solution?'",
                 }, {
                     role: "user",
                     content: ask,
@@ -53,6 +55,7 @@ export default {
                 }, ],
                 chat_template_kwargs: {
                     enable_thinking: false,
+                    enable_searching: true,
                 },
             });
             return new Response(response3['choices'][0]['message']['content']);//['choices']);//[0]['message']['content']);
@@ -265,7 +268,7 @@ export default {
           rotate:360deg;
         }
       }</style>
-    <link rel="icon" type="image/x-icon" href="/static/favicon.png" />
+    <link rel="icon" type="image/x-icon" href="https://amsilla.com/cdn/favicon.png" />
     <script
       src="https://kit.fontawesome.com/c4d643d840.js"
       crossorigin="anonymous"
@@ -306,7 +309,7 @@ textbox.addEventListener("keydown",function(e){
   </head>
   <body>
     <nav>
-      <div class="logo"><img src="/static/favicon.png" />VialAI</div>
+      <div class="logo"><img src="https://amsilla.com/cdn/favicon.png" />VialAI</div>
       <div class="btncont">
         <i class="fa-solid fa-info-circle"></i>&nbsp;For the GCC Labor Day Hackathon
       </div>
